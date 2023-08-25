@@ -1,3 +1,4 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
     <title>Title</title>
@@ -10,9 +11,9 @@
 <!--    사원 추가 모달   -->
 <div id="addEmployeeModal" class="modal">
     <div class="modal-content">
-        <form action="#" method="POST">
+        <form name="insertEmp">
             <label>비밀번호</label>
-            <input type="text" name="password" required><br />
+            <input type="text" name="empPw" required><br />
 
             <label>이름</label>
             <input type="text" name="empName" required><br />
@@ -20,11 +21,15 @@
             <label>휴대폰 번호</label>
             <input type="tel" name="empTel" required><br />
 
+            <label>우편번호</label>
+            <input type="text" name="empZip" required><br />
             <label>주소</label>
             <input type="text" name="empAddr" required><br />
+            <label>상세주소</label>
+            <input type="text" name="empAddrDetail" required><br />
 
             <label>생년월일</label>
-            <input type="text" name="empBirth" required><br />
+            <input type="text" name="empBir" required><br />
 
             <label>최종학력</label>
             <input type="radio" name="empEdu" id="empEdu1" value="0" checked>
@@ -32,26 +37,26 @@
             <input type="radio" name="empEdu" id="empEdu2" value="1">
             <label for="empEdu2">대졸</label>
             <input type="radio" name="empEdu" id="empEdu3" value="2">
-            <label for="empEdu3">석사</label><br />
+            <label for="empEdu3">석사</label>
             <input type="radio" name="empEdu" id="empEdu4" value="3">
             <label for="empEdu3">박사</label><br />
 
             <label>직급</label>
-            <input type="radio" name="empPos" id="empPos1" checked>
+            <input type="radio" name="empPos" id="empPos1" value="08" checked>
             <label for="empPos1">사원</label>
-            <input type="radio" name="empPos" id="empPos2">
+            <input type="radio" name="empPos" id="empPos2" value="07">
             <label for="empPos2">대리</label>
-            <input type="radio" name="empPos" id="empPos3">
+            <input type="radio" name="empPos" id="empPos3" value="06">
             <label for="empPos3">과장</label>
-            <input type="radio" name="empPos" id="empPos4">
+            <input type="radio" name="empPos" id="empPos4" value="05">
             <label for="empPos4">차장</label>
-            <input type="radio" name="empPos" id="empPos5">
+            <input type="radio" name="empPos" id="empPos5" value="04">
             <label for="empPos5">팀장</label>
-            <input type="radio" name="empPos" id="empPos6">
+            <input type="radio" name="empPos" id="empPos6" value="03">
             <label for="empPos6">부장</label>
-            <input type="radio" name="empPos" id="empPos7">
+            <input type="radio" name="empPos" id="empPos7" value="02">
             <label for="empPos7">이사</label>
-            <input type="radio" name="empPos" id="empPos8">
+            <input type="radio" name="empPos" id="empPos8" value="01">
             <label for="empPos8">대표</label> <br />
 
             <label>부서</label>
@@ -69,20 +74,20 @@
 
             <label>사원번호</label>
             <input type="text" name="empId" id="empId" required readonly>
-            <button id="generateId">사원 번호 생성</button><br />
+            <button id="generateId" type="button">사원 번호 생성</button><br />
 
             <label>이메일</label>
             <input type="email" name="empMail" id="empMail" required><br />
 
             <label>재직 상태 설정</label>
-            <input type="radio" name="state" id="office" value="0" checked>
+            <input type="radio" name="empStatus" id="office" value="0" checked>
             <label for="office">재직</label>
-            <input type="radio" name="state" id="leave" value="1">
+            <input type="radio" name="empStatus" id="leave" value="1">
             <label for="leave">휴직</label>
-            <input type="radio" name="state" id="quit" value="2">
+            <input type="radio" name="empStatus" id="quit" value="2">
             <label for="quit">퇴사</label>
             <br /><br />
-            <button type="submit">저장</button>
+            <button type="button" id="insert">등록</button>
             <button type="reset">지우기</button>
         </form>
     </div>
@@ -166,29 +171,110 @@
 </table>
 
 <script>
-    let joinDate = undefined;
+    let joinDateVal = undefined;
+    let empEduIs = undefined;
+    let empStatusIs = undefined;
+    let empPosIs = undefined;
     const empId = document.querySelector("#empId");
+    const empPw = document.querySelector("input[name=empPw]");
+    const empName = document.querySelector("input[name=empName]");
+    const empTel = document.querySelector("input[name=empTel]");
+    const empMail = document.querySelector("input[name=empMail]");
+    const empZip = document.querySelector("input[name=empZip]");
+    const empAddr = document.querySelector("input[name=empAddr]");
+    const empAddrDetail = document.querySelector("input[name=empAddr]");
+    const empEdu = document.querySelectorAll("input[name=empEdu]");
+    const empBir = document.querySelector("input[name=empBir]");
+    const empStatus = document.querySelectorAll("input[name=empStatus]");
+    const empPos = document.querySelectorAll("input[name=empPos]");
+    const empDep = document.querySelector("select[name=filterDep]");
+    const empJoinDate = document.querySelector("input[name=joinDate]");
+
+
     document.getElementById("selectAll").addEventListener("change", function() {
         const checked = document.querySelectorAll(".selectEmp");
         checked.forEach(checkbox => {
             checkbox.checked = this.checked;
         });
     });
-    document.querySelector("#joinDate").addEventListener("change",function(){
-        joinDate = this.value;
-    });
-    document.querySelector("#generateId").addEventListener("click",function(){
-        const dateSplit = joinDate.split("-");
-        const depCode = document.querySelector("#emp-department").value;
-        empId.value = `${dateSplit[0]}${depCode}001`;
 
-        if(empId != ""){
-            document.querySelector("#empMail").value = empId.value + "@groovy.com";
+    empJoinDate.addEventListener("change",function(){
+        joinDateVal = this.value;
+        console.log(joinDateVal);
+    });
+
+    document.querySelector("#generateId").addEventListener("click",function(){
+        const dateSplit = joinDateVal.split("-");
+        const depCode = empDep.value;
+
+        //ajax 처리 하고 idx에 담아주세여
+        let idx = "001";
+        empId.value = `${dateSplit[0]}${dateSplit[1]}${idx}`;
+
+        if(empId.value != ""){
+            empMail.value = empId.value + "@groovy.com";
         }
     })
-    document.querySelector("#empId").addEventListener("change",function(){
-        document.querySelector("#empMail").value = id + "@groovy.com";
 
+
+    // 등록
+    document.querySelector("#insert").addEventListener("click",function(){
+
+        /* 학력 */
+        for (const edu of empEdu) {
+            if(edu.checked){
+                empEduIs = edu.value;
+                break;
+            }
+        }
+        /* 상태 */
+        for (const status of empStatus) {
+            if(status.checked){
+                empStatusIs = status.value;
+                break;
+            }
+        }
+        /* 직급 */
+        for (const pos of empPos) {
+            if(pos.checked){
+                empPosIs = pos.value;
+                break;
+            }
+        }
+        /* 사원 VO */
+        const empVO = {
+            empId : empId.value,
+            empName : empName.value,
+            empTel : empTel.value,
+            empZip : empZip.value,
+            empAddr : empAddr.value,
+            empAddrDetail : empAddrDetail.value,
+            empBir : empBir.value,
+            empEdu : empEduIs,
+            empPos : empPosIs,
+            empDep : empDep.value,
+            empJoinDate : empJoinDate.value,
+            empMail : empMail.value,
+            empStatus : empStatusIs
+        }
+
+        /* 사원 데이터 중 하나라도 null 이면 전송 x alert */
+        let hasNull = false;
+        for (const vo in empVO) {
+            if (!empVO[vo] || empVO[vo].trim() === '') {
+                hasNull = true;
+                break;
+            }else {
+                hasNull = false;
+                break;
+            }
+        }
+        if(!hasNull){
+            /* ajax */
+            console.log(empVO);
+        }else {
+            alert("모든 항목을 입력해주세요.");
+        }
     })
 </script>
 </body>
