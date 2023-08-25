@@ -1,4 +1,3 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
     <title>Title</title>
@@ -21,9 +20,6 @@
             <label>휴대폰 번호</label>
             <input type="tel" name="empTel" required><br />
 
-            <label>이메일</label>
-            <input type="email" name="empMail" required><br />
-
             <label>주소</label>
             <input type="text" name="empAddr" required><br />
 
@@ -31,12 +27,14 @@
             <input type="text" name="empBirth" required><br />
 
             <label>최종학력</label>
-            <input type="radio" name="empEdu" id="empEdu1" checked>
+            <input type="radio" name="empEdu" id="empEdu1" value="0" checked>
             <label for="empEdu1">고졸이하</label>
-            <input type="radio" name="empEdu" id="empEdu2">
+            <input type="radio" name="empEdu" id="empEdu2" value="1">
             <label for="empEdu2">대졸</label>
-            <input type="radio" name="empEdu" id="empEdu3">
-            <label for="empEdu3">대졸이상(석사,박사)</label><br />
+            <input type="radio" name="empEdu" id="empEdu3" value="2">
+            <label for="empEdu3">석사</label><br />
+            <input type="radio" name="empEdu" id="empEdu4" value="3">
+            <label for="empEdu3">박사</label><br />
 
             <label>직급</label>
             <input type="radio" name="empPos" id="empPos1" checked>
@@ -67,18 +65,21 @@
             </select><br />
 
             <label>입사일</label>
-            <input type="date" name="joinDate" required><br />
+            <input type="date" value="2018-04-09" name="joinDate" id="joinDate" required><br />
 
             <label>사원번호</label>
-            <input type="text" name="empId" required readonly>
+            <input type="text" name="empId" id="empId" required readonly>
             <button id="generateId">사원 번호 생성</button><br />
 
+            <label>이메일</label>
+            <input type="email" name="empMail" id="empMail" required><br />
+
             <label>재직 상태 설정</label>
-            <input type="radio" name="state" id="office" checked>
+            <input type="radio" name="state" id="office" value="0" checked>
             <label for="office">재직</label>
-            <input type="radio" name="state" id="leave">
+            <input type="radio" name="state" id="leave" value="1">
             <label for="leave">휴직</label>
-            <input type="radio" name="state" id="quit" >
+            <input type="radio" name="state" id="quit" value="2">
             <label for="quit">퇴사</label>
             <br /><br />
             <button type="submit">저장</button>
@@ -165,12 +166,30 @@
 </table>
 
 <script>
+    let joinDate = undefined;
+    const empId = document.querySelector("#empId");
     document.getElementById("selectAll").addEventListener("change", function() {
         const checked = document.querySelectorAll(".selectEmp");
         checked.forEach(checkbox => {
             checkbox.checked = this.checked;
         });
     });
+    document.querySelector("#joinDate").addEventListener("change",function(){
+        joinDate = this.value;
+    });
+    document.querySelector("#generateId").addEventListener("click",function(){
+        const dateSplit = joinDate.split("-");
+        const depCode = document.querySelector("#emp-department").value;
+        empId.value = `${dateSplit[0]}${depCode}001`;
+
+        if(empId != ""){
+            document.querySelector("#empMail").value = empId.value + "@groovy.com";
+        }
+    })
+    document.querySelector("#empId").addEventListener("change",function(){
+        document.querySelector("#empMail").value = id + "@groovy.com";
+
+    })
 </script>
 </body>
 </html>
