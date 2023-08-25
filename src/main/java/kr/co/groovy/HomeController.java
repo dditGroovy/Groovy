@@ -47,15 +47,9 @@ public class HomeController {
 		return "test/test1";
 	}
 
-	@GetMapping("/login")
-	public String login() {
-		return "login";
-	}
-
 	@GetMapping("/test/company-notice")
 	public String companyNotice() {
 		return "test/company-notice";
 	}
-
 
 }
